@@ -1,0 +1,5 @@
+*.h
+!include/nstd/ext/vm.h
+.vscode
+lib
+test
