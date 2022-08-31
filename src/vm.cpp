@@ -2,8 +2,16 @@
 #include <nstd/core/slice.h>
 #include <nstd/ext/vm.h>
 
-/// No operation.
-static constexpr const NSTDUInt16 OP_NOP{0x0000};
+/// An enumeration of each operation code.
+enum class Opcode : NSTDUInt16
+{
+    /// No operation.
+    NOP,
+    /// Exit operation.
+    EXIT,
+    /// Move operation.
+    MOVE
+};
 
 /// Wraps the currently loaded program's in-vm-memory buffer.
 class Cursor
@@ -40,7 +48,7 @@ public:
 /// # Returns
 ///
 /// `NSTDEXTVM vm` - The new virtual machine.
-NSTDAPI inline NSTDEXTVM nstd_ext_vm_new()
+NSTDAPI extern "C" inline NSTDEXTVM nstd_ext_vm_new()
 {
     return NSTDEXTVM{};
 }
@@ -62,7 +70,7 @@ NSTDAPI inline NSTDEXTVM nstd_ext_vm_new()
 /// # Safety
 ///
 /// This operation may cause undefined behavior in the event that `program`'s data is invalid.
-NSTDAPI void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *const program)
+NSTDAPI extern "C" void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *const program)
 {
     const NSTDUInt len{nstd_core_slice_len(program)};
     if (len <= NSTD_EXT_VM_RAM && nstd_core_slice_stride(program) == 1)
@@ -77,19 +85,32 @@ NSTDAPI void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *const progra
 ///
 /// # Parameters:
 ///
-/// - `const NSTDEXTVM *vm` - The virtual machine.
-NSTDAPI void nstd_ext_vm_run(const NSTDEXTVM *vm)
+/// - `NSTDEXTVM *vm` - The virtual machine.
+NSTDAPI extern "C" void nstd_ext_vm_run(NSTDEXTVM *vm)
 {
-    for (Cursor cursor{vm}; !cursor.finished();)
+    Cursor cursor{vm};
+    while (!cursor.finished())
     {
         // Read the next opcode.
-        const NSTDUInt16 opcode{cursor.next<NSTDUInt16>()};
+        const Opcode opcode{cursor.next<Opcode>()};
         // Execute the next instruction.
         switch (opcode)
         {
         // No operation.
-        case OP_NOP:
+        case Opcode::NOP:
             break;
+        // Exit operation.
+        case Opcode::EXIT:
+            return;
+        // Move operation.
+        case Opcode::MOVE:
+        {
+            const NSTDUInt16 dest{cursor.next<NSTDUInt16>()};
+            const NSTDUInt16 src{cursor.next<NSTDUInt16>()};
+            const NSTDUInt16 num{cursor.next<NSTDUInt16>()};
+            nstd_core_mem_copy(vm->mem + dest, vm->mem + src, num);
+            break;
+        }
         // Incorrect operation code.
         default:
             throw;

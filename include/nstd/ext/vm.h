@@ -46,8 +46,8 @@ NSTDAPI void nstd_ext_vm_load(NSTDEXTVM *vm, const NSTDSlice *program);
 ///
 /// # Parameters:
 ///
-/// - `const NSTDEXTVM *vm` - The virtual machine.
-NSTDAPI void nstd_ext_vm_run(const NSTDEXTVM *vm);
+/// - `NSTDEXTVM *vm` - The virtual machine.
+NSTDAPI void nstd_ext_vm_run(NSTDEXTVM *vm);
 
 NSTDCPPEND
 #endif
