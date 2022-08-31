@@ -36,6 +36,10 @@ NSTDAPI NSTDEXTVM nstd_ext_vm_new();
 /// - `NSTDEXTVM *vm` - The virtual machine.
 ///
 /// - `const NSTDSlice *program` - The program to be run on the virtual machine.
+///
+/// # Safety
+///
+/// This operation may cause undefined behavior in the event that `program`'s data is invalid.
 NSTDAPI void nstd_ext_vm_load(NSTDEXTVM *vm, const NSTDSlice *program);
 
 /// Executes the currently loaded program in a virtual machine.

@@ -43,6 +43,10 @@ NSTDAPI inline NSTDEXTVM nstd_ext_vm_new()
 /// - `NSTDEXTVM *vm` - The virtual machine.
 ///
 /// - `const NSTDSlice *program` - The program to be run on the virtual machine.
+///
+/// # Safety
+///
+/// This operation may cause undefined behavior in the event that `program`'s data is invalid.
 NSTDAPI void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *const program)
 {
     const NSTDUInt len{nstd_core_slice_len(program)};
