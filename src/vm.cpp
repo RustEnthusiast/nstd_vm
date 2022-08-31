@@ -1,7 +1,6 @@
 #include <nstd/core/mem.h>
 #include <nstd/core/slice.h>
 #include <nstd/ext/vm.h>
-#include <iostream>
 
 /// No operation.
 static constexpr const NSTDUInt16 OP_NOP{0x0000};
@@ -62,7 +61,6 @@ NSTDAPI void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *const progra
 /// - `const NSTDEXTVM *vm` - The virtual machine.
 NSTDAPI void nstd_ext_vm_run(const NSTDEXTVM *vm)
 {
-    std::cout << vm->program_size;
     const NSTDByte *const end{vm->mem + vm->program_size};
     for (const NSTDByte *cursor{vm->mem}; cursor < end;)
     {
