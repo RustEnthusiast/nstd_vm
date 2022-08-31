@@ -5,20 +5,35 @@
 /// No operation.
 static constexpr const NSTDUInt16 OP_NOP{0x0000};
 
-/// Reads the next opcode/value from the virtual machine's currently loaded program and advances
-/// the cursor.
-template <typename T>
-static inline T vm_read(
-    const NSTDEXTVM *const vm,
-    const NSTDByte **const cursor,
-    const NSTDByte *const end)
+/// Wraps the currently loaded program's in-vm-memory buffer.
+class Cursor
 {
-    const T *const ptr{(const T *)*cursor};
-    *cursor += sizeof(T);
-    if (*cursor > end)
-        throw;
-    return *ptr;
-}
+    /// The current position in the program.
+    const NSTDByte *pos;
+    /// A pointer to (one byte past) the end of the program.
+    const NSTDByte *end;
+
+public:
+    /// Wraps the currently loaded program.
+    Cursor(const NSTDEXTVM *const vm) : pos{vm->mem}, end{pos + vm->program_size} {}
+
+    /// Returns the value at the current position in the program and advances the cursor.
+    template <typename T>
+    inline T next()
+    {
+        const T *const ptr{(const T *)pos};
+        pos += sizeof(T);
+        if (pos > end)
+            throw;
+        return *ptr;
+    }
+
+    /// Returns `true` if the program has finished.
+    inline bool finished() const
+    {
+        return pos >= end;
+    }
+};
 
 /// Creates a new instance of `NSTDEXTVM`.
 ///
@@ -65,11 +80,10 @@ NSTDAPI void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *const progra
 /// - `const NSTDEXTVM *vm` - The virtual machine.
 NSTDAPI void nstd_ext_vm_run(const NSTDEXTVM *vm)
 {
-    const NSTDByte *const end{vm->mem + vm->program_size};
-    for (const NSTDByte *cursor{vm->mem}; cursor < end;)
+    for (Cursor cursor{vm}; !cursor.finished();)
     {
         // Read the next opcode.
-        const NSTDUInt16 opcode{vm_read<NSTDUInt16>(vm, &cursor, end)};
+        const NSTDUInt16 opcode{cursor.next<NSTDUInt16>()};
         // Execute the next instruction.
         switch (opcode)
         {
