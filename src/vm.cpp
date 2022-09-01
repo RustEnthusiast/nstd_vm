@@ -9,6 +9,8 @@ enum class Opcode : NSTDUInt16
     NOP,
     /// Exit operation.
     EXIT,
+    /// Jump operation.
+    JUMP,
     /// Move operation.
     MOVE,
     /// 8-bit move operation.
@@ -42,6 +44,15 @@ public:
         if (pos > end)
             throw;
         return *ptr;
+    }
+
+    /// Sets the cursor's position.
+    inline void jump(const NSTDEXTVM *const vm, const NSTDUInt16 new_pos)
+    {
+        if (new_pos < vm->program_size)
+            pos = vm->mem + new_pos;
+        else
+            throw;
     }
 
     /// Returns `true` if the program has finished.
@@ -136,6 +147,13 @@ NSTDAPI extern "C" void nstd_ext_vm_run(NSTDEXTVM *const vm)
         // Exit operation.
         case Opcode::EXIT:
             return;
+        // Jump operation.
+        case Opcode::JUMP:
+        {
+            const NSTDUInt16 dest{cursor.next<NSTDUInt16>()};
+            cursor.jump(vm, dest);
+            break;
+        }
         // Move operation.
         case Opcode::MOVE:
         {
