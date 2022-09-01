@@ -6,28 +6,28 @@
 
 /// Returns a pointer to the value at location `pos` in the virtual machine's memory.
 template <typename T>
-static inline T *get(NSTDEXTVM *const vm, const NSTDUInt16 pos)
+static inline T *get(NSTDVM *const vm, const NSTDUInt16 pos)
 {
     return (T *)(vm->mem + pos);
 }
 
 /// Executes the move operation.
 template <typename T>
-static inline void move(NSTDEXTVM *const vm, Cursor &cursor)
+static inline void move(NSTDVM *const vm, Cursor &cursor)
 {
     const NSTDUInt16 dest{cursor.next<NSTDUInt16>()};
     const NSTDUInt16 src{cursor.next<NSTDUInt16>()};
     *get<T>(vm, dest) = *get<T>(vm, src);
 }
 
-/// Creates a new instance of `NSTDEXTVM`.
+/// Creates a new instance of `NSTDVM`.
 ///
 /// # Returns
 ///
-/// `NSTDEXTVM vm` - The new virtual machine.
-NSTDAPI extern "C" inline NSTDEXTVM nstd_ext_vm_new()
+/// `NSTDVM vm` - The new virtual machine.
+NSTDAPI extern "C" inline NSTDVM nstd_ext_vm_new()
 {
-    return NSTDEXTVM{};
+    return NSTDVM{};
 }
 
 /// Loads a byte slice of instructions into the virtual machine's memory.
@@ -40,14 +40,14 @@ NSTDAPI extern "C" inline NSTDEXTVM nstd_ext_vm_new()
 ///
 /// # Parameters:
 ///
-/// - `NSTDEXTVM *vm` - The virtual machine.
+/// - `NSTDVM *vm` - The virtual machine.
 ///
 /// - `const NSTDSlice *program` - The program to be run on the virtual machine.
 ///
 /// # Safety
 ///
 /// This operation may cause undefined behavior in the event that `program`'s data is invalid.
-NSTDAPI extern "C" void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *const program)
+NSTDAPI extern "C" void nstd_ext_vm_load(NSTDVM *const vm, const NSTDSlice *const program)
 {
     if (vm)
     {
@@ -70,8 +70,8 @@ NSTDAPI extern "C" void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *c
 ///
 /// # Parameters:
 ///
-/// - `NSTDEXTVM *vm` - The virtual machine.
-NSTDAPI extern "C" void nstd_ext_vm_run(NSTDEXTVM *const vm)
+/// - `NSTDVM *vm` - The virtual machine.
+NSTDAPI extern "C" void nstd_ext_vm_run(NSTDVM *const vm)
 {
     if (!vm)
         return;

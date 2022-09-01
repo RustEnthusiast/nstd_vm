@@ -14,7 +14,7 @@ class Cursor
 
 public:
     /// Wraps the currently loaded program.
-    Cursor(const NSTDEXTVM *const vm) : pos{vm->mem}, end{pos + vm->program_size} {}
+    Cursor(const NSTDVM *const vm) : pos{vm->mem}, end{pos + vm->program_size} {}
 
     /// Returns the value at the current position in the program and advances the cursor.
     template <typename T>
@@ -28,7 +28,7 @@ public:
     }
 
     /// Sets the cursor's position.
-    inline void jump(const NSTDEXTVM *const vm, const NSTDUInt16 new_pos)
+    inline void jump(const NSTDVM *const vm, const NSTDUInt16 new_pos)
     {
         if (new_pos < vm->program_size)
             pos = vm->mem + new_pos;

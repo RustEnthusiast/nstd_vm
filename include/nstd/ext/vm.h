@@ -5,7 +5,7 @@
 #include "../nstd.h"
 NSTDCPPSTART
 
-/// The default number of bytes an `NSTDEXTVM` has for random access memory.
+/// The default number of bytes an `NSTDVM` has for random access memory.
 #define NSTD_EXT_VM_RAM 1024 * 64
 
 /// A little virtual machine to run alongside your app.
@@ -14,14 +14,14 @@ typedef struct {
     NSTDUInt program_size;
     /// The virtual machine's memory.
     NSTDByte mem[NSTD_EXT_VM_RAM];
-} NSTDEXTVM;
+} NSTDVM;
 
-/// Creates a new instance of `NSTDEXTVM`.
+/// Creates a new instance of `NSTDVM`.
 ///
 /// # Returns
 ///
-/// `NSTDEXTVM vm` - The new virtual machine.
-NSTDAPI NSTDEXTVM nstd_ext_vm_new();
+/// `NSTDVM vm` - The new virtual machine.
+NSTDAPI NSTDVM nstd_ext_vm_new();
 
 /// Loads a byte slice of instructions into the virtual machine's memory.
 ///
@@ -33,21 +33,21 @@ NSTDAPI NSTDEXTVM nstd_ext_vm_new();
 ///
 /// # Parameters:
 ///
-/// - `NSTDEXTVM *vm` - The virtual machine.
+/// - `NSTDVM *vm` - The virtual machine.
 ///
 /// - `const NSTDSlice *program` - The program to be run on the virtual machine.
 ///
 /// # Safety
 ///
 /// This operation may cause undefined behavior in the event that `program`'s data is invalid.
-NSTDAPI void nstd_ext_vm_load(NSTDEXTVM *vm, const NSTDSlice *program);
+NSTDAPI void nstd_ext_vm_load(NSTDVM *vm, const NSTDSlice *program);
 
 /// Executes the currently loaded program in a virtual machine.
 ///
 /// # Parameters:
 ///
-/// - `NSTDEXTVM *vm` - The virtual machine.
-NSTDAPI void nstd_ext_vm_run(NSTDEXTVM *vm);
+/// - `NSTDVM *vm` - The virtual machine.
+NSTDAPI void nstd_ext_vm_run(NSTDVM *vm);
 
 NSTDCPPEND
 #endif
