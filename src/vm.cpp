@@ -1,66 +1,8 @@
+#include <nstd_vm/cursor.hpp>
+#include <nstd_vm/opcode.hpp>
 #include <nstd/core/mem.h>
 #include <nstd/core/slice.h>
 #include <nstd/ext/vm.h>
-
-/// An enumeration of each operation code.
-enum class Opcode : NSTDUInt16
-{
-    /// No operation.
-    NOP,
-    /// Exit operation.
-    EXIT,
-    /// Jump operation.
-    JUMP,
-    /// Move operation.
-    MOVE,
-    /// 8-bit move operation.
-    MOVE8,
-    /// 16-bit move operation.
-    MOVE16,
-    /// 32-bit move operation.
-    MOVE32,
-    /// 64-bit move operation.
-    MOVE64
-};
-
-/// Wraps the currently loaded program's in-vm-memory buffer.
-class Cursor
-{
-    /// The current position in the program.
-    const NSTDByte *pos;
-    /// A pointer to (one byte past) the end of the program.
-    const NSTDByte *end;
-
-public:
-    /// Wraps the currently loaded program.
-    Cursor(const NSTDEXTVM *const vm) : pos{vm->mem}, end{pos + vm->program_size} {}
-
-    /// Returns the value at the current position in the program and advances the cursor.
-    template <typename T>
-    inline T next()
-    {
-        const T *const ptr{(const T *)pos};
-        pos += sizeof(T);
-        if (pos > end)
-            throw;
-        return *ptr;
-    }
-
-    /// Sets the cursor's position.
-    inline void jump(const NSTDEXTVM *const vm, const NSTDUInt16 new_pos)
-    {
-        if (new_pos < vm->program_size)
-            pos = vm->mem + new_pos;
-        else
-            throw;
-    }
-
-    /// Returns `true` if the program has finished.
-    inline bool finished() const
-    {
-        return pos >= end;
-    }
-};
 
 /// Returns a pointer to the value at location `pos` in the virtual machine's memory.
 template <typename T>
