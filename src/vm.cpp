@@ -10,7 +10,15 @@ enum class Opcode : NSTDUInt16
     /// Exit operation.
     EXIT,
     /// Move operation.
-    MOVE
+    MOVE,
+    /// 8-bit move operation.
+    MOVE8,
+    /// 16-bit move operation.
+    MOVE16,
+    /// 32-bit move operation.
+    MOVE32,
+    /// 64-bit move operation.
+    MOVE64
 };
 
 /// Wraps the currently loaded program's in-vm-memory buffer.
@@ -43,6 +51,22 @@ public:
     }
 };
 
+/// Returns a pointer to the value at location `pos` in the virtual machine's memory.
+template <typename T>
+static inline T *get(NSTDEXTVM *const vm, const NSTDUInt16 pos)
+{
+    return (T *)(vm->mem + pos);
+}
+
+/// Executes the move operation.
+template <typename T>
+static inline void move(NSTDEXTVM *const vm, Cursor &cursor)
+{
+    const NSTDUInt16 dest{cursor.next<NSTDUInt16>()};
+    const NSTDUInt16 src{cursor.next<NSTDUInt16>()};
+    *get<T>(vm, dest) = *get<T>(vm, src);
+}
+
 /// Creates a new instance of `NSTDEXTVM`.
 ///
 /// # Returns
@@ -72,12 +96,20 @@ NSTDAPI extern "C" inline NSTDEXTVM nstd_ext_vm_new()
 /// This operation may cause undefined behavior in the event that `program`'s data is invalid.
 NSTDAPI extern "C" void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *const program)
 {
-    const NSTDUInt len{nstd_core_slice_len(program)};
-    if (len <= NSTD_EXT_VM_RAM && nstd_core_slice_stride(program) == 1)
+    if (vm)
     {
-        const NSTDByte *const pptr{static_cast<const NSTDByte *>(nstd_core_slice_as_ptr(program))};
-        nstd_core_mem_copy(vm->mem, pptr, len);
-        vm->program_size = len;
+        if (program)
+        {
+            const NSTDUInt len{nstd_core_slice_len(program)};
+            if (len <= NSTD_EXT_VM_RAM && nstd_core_slice_stride(program) == 1)
+            {
+                const NSTDAny pptr{nstd_core_slice_as_ptr(program)};
+                nstd_core_mem_copy(vm->mem, static_cast<const NSTDByte *>(pptr), len);
+                vm->program_size = len;
+            }
+        }
+        else
+            vm->program_size = 0;
     }
 }
 
@@ -86,8 +118,10 @@ NSTDAPI extern "C" void nstd_ext_vm_load(NSTDEXTVM *const vm, const NSTDSlice *c
 /// # Parameters:
 ///
 /// - `NSTDEXTVM *vm` - The virtual machine.
-NSTDAPI extern "C" void nstd_ext_vm_run(NSTDEXTVM *vm)
+NSTDAPI extern "C" void nstd_ext_vm_run(NSTDEXTVM *const vm)
 {
+    if (!vm)
+        return;
     Cursor cursor{vm};
     while (!cursor.finished())
     {
@@ -111,6 +145,26 @@ NSTDAPI extern "C" void nstd_ext_vm_run(NSTDEXTVM *vm)
             nstd_core_mem_copy(vm->mem + dest, vm->mem + src, num);
             break;
         }
+        // 8-bit move operation.
+        case Opcode::MOVE8:
+        {
+            const NSTDUInt16 dest{cursor.next<NSTDUInt16>()};
+            const NSTDUInt16 src{cursor.next<NSTDUInt16>()};
+            vm->mem[dest] = vm->mem[src];
+            break;
+        }
+        // 16-bit move operation.
+        case Opcode::MOVE16:
+            move<NSTDUInt16>(vm, cursor);
+            break;
+        // 32-bit move operation.
+        case Opcode::MOVE32:
+            move<NSTDUInt32>(vm, cursor);
+            break;
+        // 64-bit move operation.
+        case Opcode::MOVE64:
+            move<NSTDUInt64>(vm, cursor);
+            break;
         // Incorrect operation code.
         default:
             throw;
