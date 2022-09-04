@@ -30,10 +30,9 @@ public:
     /// Sets the cursor's position.
     inline void jump(const NSTDVM *const vm, const NSTDUInt16 new_pos)
     {
-        if (new_pos < vm->program_size)
-            pos = vm->mem + new_pos;
-        else
+        if (new_pos > vm->program_size)
             throw;
+        pos = vm->mem + new_pos;
     }
 
     /// Returns `true` if the program has finished.
