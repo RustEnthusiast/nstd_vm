@@ -7,10 +7,13 @@
 /// The default number of bytes an `NSTDVM` has for random access memory.
 #define NSTD_VM_RAM 1024 * 64
 
+/// The type used to index the virtual machine's memory.
+typedef NSTDUInt16 NSTDVMUInt;
+
 /// A little virtual machine to run alongside your app.
 typedef struct {
     /// The size in bytes of the currently loaded program.
-    NSTDUInt program_size;
+    NSTDVMUInt program_size;
     /// The virtual machine's memory.
     NSTDByte mem[NSTD_VM_RAM];
 } NSTDVM;

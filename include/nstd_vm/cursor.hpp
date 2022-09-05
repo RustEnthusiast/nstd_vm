@@ -28,7 +28,7 @@ public:
     }
 
     /// Sets the cursor's position.
-    inline void jump(const NSTDVM *const vm, const NSTDUInt16 new_pos)
+    inline void jump(const NSTDVM *const vm, const NSTDVMUInt new_pos)
     {
         if (new_pos > vm->program_size)
             throw;
