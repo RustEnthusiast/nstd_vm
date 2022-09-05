@@ -36,7 +36,7 @@ NSTDAPI NSTDVM nstd_ext_vm_new()
 ///
 /// - `program`'s stride is not 1.
 ///
-/// - `program`'s length is greater than `NSTD_EXT_VM_RAM`.
+/// - `program`'s length is greater than `NSTD_VM_RAM`.
 ///
 /// # Parameters:
 ///
@@ -54,7 +54,7 @@ NSTDAPI void nstd_ext_vm_load(NSTDVM *const vm, const NSTDSlice *const program)
         if (program)
         {
             const NSTDUInt len{nstd_core_slice_len(program)};
-            if (len <= NSTD_EXT_VM_RAM && nstd_core_slice_stride(program) == 1)
+            if (len <= NSTD_VM_RAM && nstd_core_slice_stride(program) == 1)
             {
                 const NSTDAny pptr{nstd_core_slice_as_ptr(program)};
                 nstd_core_mem_copy(vm->mem, static_cast<const NSTDByte *>(pptr), len);

@@ -5,14 +5,14 @@
 #include "../nstd.h"
 
 /// The default number of bytes an `NSTDVM` has for random access memory.
-#define NSTD_EXT_VM_RAM 1024 * 64
+#define NSTD_VM_RAM 1024 * 64
 
 /// A little virtual machine to run alongside your app.
 typedef struct {
     /// The size in bytes of the currently loaded program.
     NSTDUInt program_size;
     /// The virtual machine's memory.
-    NSTDByte mem[NSTD_EXT_VM_RAM];
+    NSTDByte mem[NSTD_VM_RAM];
 } NSTDVM;
 
 /// Creates a new instance of `NSTDVM`.
@@ -28,7 +28,7 @@ NSTDAPI NSTDVM nstd_ext_vm_new();
 ///
 /// - `program`'s stride is not 1.
 ///
-/// - `program`'s length is greater than `NSTD_EXT_VM_RAM`.
+/// - `program`'s length is greater than `NSTD_VM_RAM`.
 ///
 /// # Parameters:
 ///
