@@ -25,7 +25,7 @@ static inline void move(NSTDVM *const vm, Cursor &cursor)
 /// # Returns
 ///
 /// `NSTDVM vm` - The new virtual machine.
-NSTDAPI extern "C" inline NSTDVM nstd_ext_vm_new()
+NSTDAPI NSTDVM nstd_ext_vm_new()
 {
     return NSTDVM{};
 }
@@ -47,7 +47,7 @@ NSTDAPI extern "C" inline NSTDVM nstd_ext_vm_new()
 /// # Safety
 ///
 /// This operation may cause undefined behavior in the event that `program`'s data is invalid.
-NSTDAPI extern "C" void nstd_ext_vm_load(NSTDVM *const vm, const NSTDSlice *const program)
+NSTDAPI void nstd_ext_vm_load(NSTDVM *const vm, const NSTDSlice *const program)
 {
     if (vm)
     {
@@ -71,7 +71,7 @@ NSTDAPI extern "C" void nstd_ext_vm_load(NSTDVM *const vm, const NSTDSlice *cons
 /// # Parameters:
 ///
 /// - `NSTDVM *vm` - The virtual machine.
-NSTDAPI extern "C" void nstd_ext_vm_run(NSTDVM *const vm)
+NSTDAPI void nstd_ext_vm_run(NSTDVM *const vm)
 {
     if (!vm)
         return;

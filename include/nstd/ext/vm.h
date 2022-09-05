@@ -3,7 +3,6 @@
 #include "../core/def.h"
 #include "../core/slice.h"
 #include "../nstd.h"
-NSTDCPPSTART
 
 /// The default number of bytes an `NSTDVM` has for random access memory.
 #define NSTD_EXT_VM_RAM 1024 * 64
@@ -49,5 +48,4 @@ NSTDAPI void nstd_ext_vm_load(NSTDVM *vm, const NSTDSlice *program);
 /// - `NSTDVM *vm` - The virtual machine.
 NSTDAPI void nstd_ext_vm_run(NSTDVM *vm);
 
-NSTDCPPEND
 #endif

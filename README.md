@@ -5,4 +5,4 @@ This extension provides an example of how others can extend `nstd` with their ow
 and ideas.
 
 # Requirements
-- [nstd v0.1.2](https://github.com/RustEnthusiast/nstd/releases/tag/v0.1.2)
+- [nstd v0.1.3](https://github.com/RustEnthusiast/nstd/releases/tag/v0.1.3)
